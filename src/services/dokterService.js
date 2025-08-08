@@ -1,7 +1,17 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-export const getAllDokters = () => prisma.dokters.findMany();
+export const getAllDokters = async () => {
+  const dokters = await prisma.dokters.findMany();
+
+  return dokters.map(dokter => ({
+    ...dokter,
+    photoUrl: dokter.photo 
+      ? `http://localhost:3000/${dokter.photo.replace(/\\/g, '/')}` 
+      : null
+  }));
+};
+
 
 export const getDokterById = (id) => prisma.dokters.findUnique({ where: { id } });
 

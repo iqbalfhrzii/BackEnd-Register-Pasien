@@ -1,4 +1,18 @@
 import * as dokterService from '../services/dokterService.js';
+import multer from 'multer';
+import path from 'path';
+
+// Konfigurasi multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/dokter'); // folder penyimpanan foto
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // nama unik
+  }
+});
+
+export const upload = multer({ storage });
 
 export const getAllDokters = async (req, res) => {
   try {
@@ -21,12 +35,22 @@ export const getDokterById = async (req, res) => {
 
 export const createDokter = async (req, res) => {
   try {
-    const newDokter = await dokterService.createDokter(req.body);
+    const { name, shift, specialization, phone } = req.body;
+    
+    const newDokter = await dokterService.createDokter({
+      name,
+      shift,
+      specialization,
+      phone,
+      photo: req.file ? `/uploads/dokter/${req.file.filename}` : null
+    });
+
     res.status(201).json(newDokter);
   } catch (error) {
-    res.status(400).json({ message: 'Failed to create dokter', error });
+    res.status(400).json({ message: 'Gagal menambah dokter', error: error.message });
   }
 };
+
 
 export const updateDokter = async (req, res) => {
   try {

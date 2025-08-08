@@ -1,12 +1,20 @@
-// ===== ROUTES: dokterRoutes.js =====
+// routes/dokterRoutes.js
 import express from 'express';
-import * as dokterController from '../controllers/dokterController.js';
+import { 
+  getAllDokters, 
+  getDokterById, 
+  createDokter, 
+  updateDokter, 
+  deleteDokter, 
+  upload 
+} from '../controllers/dokterController.js';
+
 const router = express.Router();
 
-router.get('/', dokterController.getAllDokters);
-router.get('/:id', dokterController.getDokterById);
-router.post('/', dokterController.createDokter);
-router.put('/:id', dokterController.updateDokter);
-router.delete('/:id', dokterController.deleteDokter);
+router.get('/', getAllDokters);
+router.get('/:id', getDokterById);
+router.post('/', upload.single('photo'), createDokter);
+router.put('/:id', updateDokter);
+router.delete('/:id', deleteDokter);
 
 export default router;
